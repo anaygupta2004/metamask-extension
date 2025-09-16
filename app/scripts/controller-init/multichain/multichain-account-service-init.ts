@@ -1,4 +1,4 @@
-import { MultichainAccountService } from '@metamask/multichain-account-service';
+import { MultichainAccountService, TrxAccountProvider } from '@metamask/multichain-account-service';
 import { ControllerInitFunction } from '../types';
 import {
   MultichainAccountServiceMessenger,
@@ -24,8 +24,11 @@ export const MultichainAccountServiceInit: ControllerInitFunction<
   MultichainAccountServiceMessenger,
   MultichainAccountServiceInitMessenger
 > = ({ controllerMessenger, initMessenger }) => {
+  const trxProvider = new TrxAccountProvider(controllerMessenger);
+
   const controller = new MultichainAccountService({
     messenger: controllerMessenger,
+    providers: [trxProvider],
   });
 
   const preferencesState = initMessenger.call('PreferencesController:getState');

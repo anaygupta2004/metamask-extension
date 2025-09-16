@@ -286,6 +286,9 @@
   "addNewSolanaAccountLabel": {
     "message": "Solana account"
   },
+  "addNewTronAccountLabel": {
+    "message": "Tron account"
+  },
   "addNft": {
     "message": "Add NFT"
   },
@@ -3791,6 +3794,9 @@
   },
   "networkNameTestnet": {
     "message": "Testnet"
+  },
+  "networkNameTron": {
+    "message": "Tron"
   },
   "networkNameZkSyncEra": {
     "message": "zkSync Era"
