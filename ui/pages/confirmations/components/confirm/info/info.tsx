@@ -1,4 +1,5 @@
 import { TransactionType } from '@metamask/transaction-controller';
+import { ApprovalType } from '@metamask/controller-utils';
 import React, { useMemo } from 'react';
 import { useConfirmContext } from '../../../context/confirm';
 import { SignatureRequestType } from '../../../types/confirm';
@@ -16,6 +17,7 @@ import TokenTransferInfo from './token-transfer/token-transfer';
 import TypedSignV1Info from './typed-sign-v1/typed-sign-v1';
 import TypedSignInfo from './typed-sign/typed-sign';
 import TypedSignPermissionInfo from './typed-sign/typed-sign-permission';
+import { AddEthereumChainInfo } from './add-ethereum-chain/add-ethereum-chain';
 
 const Info = () => {
   const { currentConfirmation } = useConfirmContext();
@@ -28,6 +30,7 @@ const Info = () => {
 
   const ConfirmationInfoComponentMap = useMemo(
     () => ({
+      // Transactions
       [TransactionType.batch]: () => BaseTransactionInfo,
       [TransactionType.contractInteraction]: () => BaseTransactionInfo,
       [TransactionType.deployContract]: () => BaseTransactionInfo,
@@ -57,6 +60,9 @@ const Info = () => {
         SetApprovalForAllInfo,
       [TransactionType.tokenMethodTransfer]: () => TokenTransferInfo,
       [TransactionType.tokenMethodTransferFrom]: () => NFTTokenTransferInfo,
+
+      // Approvals
+      [ApprovalType.AddEthereumChain]: () => AddEthereumChainInfo,
     }),
     [currentConfirmation],
   );

@@ -59,10 +59,15 @@ const useCurrentConfirmation = () => {
     }
 
     const currentConfirmation =
-      transactionMetadata ?? signatureMessage ?? undefined;
+      transactionMetadata ?? signatureMessage ?? pendingApproval ?? undefined;
 
     return { currentConfirmation };
-  }, [transactionMetadata, signatureMessage, shouldUseRedesign]);
+  }, [
+    transactionMetadata,
+    signatureMessage,
+    pendingApproval,
+    shouldUseRedesign,
+  ]);
 };
 
 export default useCurrentConfirmation;

@@ -157,7 +157,14 @@ export const ConfirmInfoRow: React.FC<ConfirmInfoRowProps> = ({
           className={onClick && 'hoverable'}
         >
           <Box display={Display.Flex} alignItems={AlignItems.center}>
-            <Text variant={TextVariant.bodyMdMedium} color={TextColor.inherit}>
+            <Text
+              variant={TextVariant.bodyMdMedium}
+              color={
+                variant === ConfirmInfoRowVariant.Default
+                  ? TextColor.textAlternative
+                  : TextColor.inherit
+              }
+            >
               {label}
             </Text>
             {labelChildren}

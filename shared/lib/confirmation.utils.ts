@@ -9,6 +9,9 @@ const REDESIGN_SIGNATURE_APPROVAL_TYPES = [
   ApprovalType.PersonalSign,
 ];
 
+/** List of approval types that support the redesigned confirmation flow */
+const REDESIGN_APPROVAL_TYPES = [ApprovalType.AddEthereumChain];
+
 /** List of transaction types that support the redesigned confirmation flow for users */
 const REDESIGN_USER_TRANSACTION_TYPES = [
   TransactionType.batch,
@@ -70,7 +73,10 @@ export function isCorrectSignatureApprovalType(
     return false;
   }
 
-  return REDESIGN_SIGNATURE_APPROVAL_TYPES.includes(approvalType);
+  return [
+    ...REDESIGN_APPROVAL_TYPES,
+    ...REDESIGN_SIGNATURE_APPROVAL_TYPES,
+  ].includes(approvalType);
 }
 
 /**

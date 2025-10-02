@@ -1,4 +1,5 @@
 import { TransactionMeta } from '@metamask/transaction-controller';
+import { ApprovalType } from '@metamask/controller-utils';
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { MetaMetricsEventLocation } from '../../../../../../shared/constants/metametrics';
@@ -27,6 +28,7 @@ import { useIsGaslessLoading } from '../../../hooks/gas/useIsGaslessLoading';
 import { useTransactionConfirm } from '../../../hooks/transactions/useTransactionConfirm';
 import { useConfirmActions } from '../../../hooks/useConfirmActions';
 import { useOriginThrottling } from '../../../hooks/useOriginThrottling';
+import { useAddEthereumChainActions } from '../../../hooks/useAddEthereumChainActions';
 import { isSignatureTransactionType } from '../../../utils';
 import { getConfirmationSender } from '../utils';
 import OriginThrottleModal from './origin-throttle-modal';
@@ -153,6 +155,7 @@ const Footer = () => {
   const dispatch = useDispatch();
   const t = useI18nContext();
   const { onTransactionConfirm } = useTransactionConfirm();
+  const { addRpc } = useAddEthereumChainActions();
 
   const { currentConfirmation, isScrollToBottomCompleted } =
     useConfirmContext<TransactionMeta>();
@@ -189,6 +192,12 @@ const Footer = () => {
       currentConfirmation?.type,
     );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if ((currentConfirmation as any)?.type === ApprovalType.AddEthereumChain) {
+      addRpc();
+      return;
+    }
+
     if (isTransactionConfirmation) {
       onTransactionConfirm();
     } else {
@@ -200,6 +209,7 @@ const Footer = () => {
     dispatch,
     onTransactionConfirm,
     resetTransactionState,
+    addRpc,
   ]);
 
   const handleFooterCancel = useCallback(() => {
@@ -231,7 +241,7 @@ const Footer = () => {
         </Button>
         <ConfirmButton
           alertOwnerId={currentConfirmation?.id}
-          onSubmit={() => onSubmit()}
+          onSubmit={onSubmit}
           disabled={isConfirmDisabled}
           onCancel={onCancel}
         />

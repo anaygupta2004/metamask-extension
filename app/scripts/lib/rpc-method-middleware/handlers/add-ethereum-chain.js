@@ -4,6 +4,7 @@ import { RpcEndpointType } from '@metamask/network-controller';
 import { rpcErrors } from '@metamask/rpc-errors';
 import { cloneDeep } from 'lodash';
 import { MESSAGE_TYPE } from '../../../../../shared/constants/app';
+import { FEATURED_RPCS } from '../../../../../shared/constants/network';
 import {
   validateAddEthereumChainParams,
   switchChain,
@@ -81,6 +82,121 @@ async function addEthereumChainHandler(
     );
   }
 
+  // Check if this chainId matches a featured network
+  const isFeatured = FEATURED_RPCS.find(
+    (featured) => featured.chainId === chainId,
+  );
+
+  if (isFeatured) {
+    try {
+      if (existingNetwork) {
+        // Featured network already exists, add the RPC as additional endpoint
+        const rpcAlreadyExists = existingNetwork.rpcEndpoints.some(({ url }) =>
+          URI.equal(url, firstValidRPCUrl),
+        );
+
+        if (rpcAlreadyExists) {
+          // RPC already exists, just switch to the network without adding anything
+          const { networkClientId } =
+            existingNetwork.rpcEndpoints[
+              existingNetwork.defaultRpcEndpointIndex
+            ];
+
+          return switchChain(res, end, chainId, networkClientId, {
+            isAddFlow: true,
+            autoApprove: false, // No changes being made, don't auto-approve
+            setActiveNetwork,
+            getCaveat,
+            requestPermittedChainsPermissionIncrementalForOrigin,
+            rejectApprovalRequestsForOrigin,
+            setTokenNetworkFilter,
+            setEnabledNetworks,
+          });
+        }
+
+        // RPC doesn't exist, add it as additional endpoint
+        await requestUserApproval({
+          origin,
+          type: ApprovalType.AddEthereumChain,
+          requestData: {
+            chainId,
+            rpcPrefs: { blockExplorerUrl: firstValidBlockExplorerUrl },
+            chainName: existingNetwork.name,
+            rpcUrl: firstValidRPCUrl,
+            ticker: existingNetwork.nativeCurrency,
+          },
+        });
+
+        // Add the new RPC as additional endpoint without switching to it
+        const clonedNetwork = cloneDeep(existingNetwork);
+        clonedNetwork.rpcEndpoints = [
+          ...clonedNetwork.rpcEndpoints,
+          {
+            url: firstValidRPCUrl,
+            type: RpcEndpointType.Custom,
+            name: `${existingNetwork.name} (${new URL(firstValidRPCUrl).hostname})`,
+          },
+        ];
+        // Keep existing defaultRpcEndpointIndex (don't switch to new RPC)
+
+        await updateNetwork(clonedNetwork.chainId, clonedNetwork);
+
+        // RPC added successfully, don't switch networks - just end the request
+        res.result = null;
+        return end();
+      }
+
+      // Featured network doesn't exist yet, create it with featured config
+      await requestUserApproval({
+        origin,
+        type: ApprovalType.AddEthereumChain,
+        requestData: {
+          chainId,
+          rpcPrefs: { blockExplorerUrl: firstValidBlockExplorerUrl },
+          chainName: isFeatured.name, // Use featured network name
+          rpcUrl: firstValidRPCUrl,
+          ticker: isFeatured.nativeCurrency,
+        },
+      });
+
+      // Create network with featured configuration + additional RPC
+      const newNetwork = await addNetwork({
+        chainId: isFeatured.chainId,
+        name: isFeatured.name,
+        nativeCurrency: isFeatured.nativeCurrency,
+        blockExplorerUrls: isFeatured.blockExplorerUrls || [],
+        defaultBlockExplorerUrlIndex: isFeatured.defaultBlockExplorerUrlIndex,
+        rpcEndpoints: [
+          ...isFeatured.rpcEndpoints, // Featured RPCs first
+          {
+            url: firstValidRPCUrl, // Add dapp's proposed RPC as additional
+            type: RpcEndpointType.Custom,
+            name: `${isFeatured.name} (${new URL(firstValidRPCUrl).hostname})`,
+          },
+        ],
+        defaultRpcEndpointIndex: isFeatured.defaultRpcEndpointIndex, // Use featured RPC as default
+      });
+
+      const { networkClientId } =
+        newNetwork.rpcEndpoints[newNetwork.defaultRpcEndpointIndex];
+
+      return switchChain(res, end, chainId, networkClientId, {
+        isAddFlow: true,
+        autoApprove: true,
+        setActiveNetwork,
+        getCaveat,
+        requestPermittedChainsPermissionIncrementalForOrigin,
+        rejectApprovalRequestsForOrigin,
+        setTokenNetworkFilter,
+        setEnabledNetworks,
+        getEnabledNetworks,
+      });
+    } catch (error) {
+      return end(error);
+    }
+  }
+
+  // Continue with normal logic for non-featured networks
   let updatedNetwork = existingNetwork;
 
   let rpcIndex = existingNetwork?.rpcEndpoints.findIndex(({ url }) =>
