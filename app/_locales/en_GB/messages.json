@@ -4015,6 +4015,9 @@
   "none": {
     "message": "None"
   },
+  "noNetworkFee": {
+    "message": "No network fee"
+  },
   "notBusy": {
     "message": "Not busy"
   },
