@@ -390,10 +390,13 @@ export function hideAppHeader(props) {
   }
 
   const isReviewGatorPermissionsPage = Boolean(
-    matchPath(location.pathname, {
-      path: REVIEW_GATOR_PERMISSIONS_ROUTE,
-      exact: false,
-    }),
+    matchPath(
+      {
+        path: REVIEW_GATOR_PERMISSIONS_ROUTE,
+        end: false,
+      },
+      location.pathname,
+    ),
   );
 
   if (isReviewGatorPermissionsPage) {
