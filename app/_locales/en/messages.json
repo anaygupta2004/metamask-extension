@@ -5594,6 +5594,30 @@
   "settingsSubHeadingSignaturesAndTransactions": {
     "message": "Signature and transaction requests"
   },
+  "shieldCoverageAlertMessageChainNotSupported": {
+    "message": "This chain is not supported, so it isn't protected by Transaction Shield. $1."
+  },
+  "shieldCoverageAlertMessageLearnHowCoverageWorks": {
+    "message": "Learn how coverage works"
+  },
+  "shieldCoverageAlertMessageTitle": {
+    "message": "This transaction isn't covered"
+  },
+  "shieldCoverageAlertMessageUnknown": {
+    "message": "This request can't be verified, so it isn't protected by Transaction Shield. $1."
+  },
+  "shieldCoverageAlertMessageSignatureNotSupported": {
+    "message": "This signature isn't supported, so it isn't protected by Transaction Shield. $1."
+  },
+  "shieldCoverageAlertMessageTxTypeNotSupported": {
+    "message": "This transaction type is not supported, so it isn't protected by Transaction Shield. $1."
+  },
+  "shieldCoverageAlertMessagePotentialRisks": {
+    "message": "This transaction has potential risks, so it isn't protected by Transaction Shield. $1."
+  },
+  "shieldCovered": {
+    "message": "Covered"
+  },
   "shieldEntryModalAssetCoverage": {
     "message": "$10,000 asset coverage per transaction"
   },
@@ -5615,6 +5639,12 @@
   },
   "shieldEntryModalSupport": {
     "message": "Priority customer support"
+  },
+  "shieldFooterAgreement": {
+    "message": "By continuing, I agree to Transaction Shield $1."
+  },
+  "shieldNotCovered": {
+    "message": "Not covered"
   },
   "shieldPlanAnnual": {
     "message": "Annual"
@@ -5676,6 +5706,9 @@
   },
   "shieldPlanTitle": {
     "message": "Choose your plan"
+  },
+  "shieldStartNowCTA": {
+    "message": "Start now"
   },
   "shieldTx": {
     "message": "Transaction Shield"
@@ -7275,6 +7308,9 @@
   },
   "transactionSettings": {
     "message": "Transaction settings"
+  },
+  "transactionShield": {
+    "message": "Transaction Shield"
   },
   "transactionSubmitted": {
     "message": "Transaction submitted with estimated gas fee of $1 at $2."
